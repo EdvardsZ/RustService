@@ -6,13 +6,13 @@ A very simple app that consumes real-time weather data every second from this si
 
 [open-meteo.com](https://open-meteo.com/en/docs)
 
-By default, it gets weather from Latitude: 52.52, Longitude: 13.41 (Just only this location is used because of the limitation of the API and for it to be simpler).
+By default, it retrieves weather information from the location with Latitude: 52.52 and Longitude: 13.41. This specific location is chosen due to API limitations and for simplicity.
 
-It receives current weather metrics like temperature, relative_humidity, wind_speed.
 
-The app calculates the "dew point" and pushes the calculation together with the real-time data to a simple Vector.
+The app collects current weather metrics such as temperature, relative humidity, and wind speed. Additionally, it calculates the "dew point" and includes this calculation along with the real-time data in a simple Vector.
 
-There is a second task which fires every 10 seconds, which writes the contents of the Vector to a database.
+There is a second task which fires every 10 seconds, writing the contents of the Vector to a database.
+
 
 ## Run it locally
 
