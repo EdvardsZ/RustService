@@ -1,0 +1,60 @@
+services:
+  db:
+    image: postgres
+    container_name: local_pgdb
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin"]
+      interval: 1s
+      timeout: 1s
+      retries: 10
+    volumes:
+      - local_pgdata:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4_container
+    restart: always
+    ports:
+      - "8888:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+
+
+  db-migrations:
+    depends_on:
+      db:
+        condition: service_healthy
+    image: willsquire/diesel-cli
+    volumes:
+      - .:/app
+    environment:
+      DB_URL: postgres://admin:admin@db:5432/rustservice
+    entrypoint: ["sh", "-c"]
+    command: ["diesel setup --database-url=$$DB_URL && diesel migration run --database-url=$$DB_URL "]
+
+  rustservice:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db-migrations
+    environment:
+      DATABASE_URL: postgres://admin:admin@db:5432/rustservice
+    profiles: [release]
+
+  
+
+    
+
+volumes:
+  local_pgdata:
+  pgadmin-data:
